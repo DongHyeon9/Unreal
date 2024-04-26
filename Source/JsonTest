@@ -1,0 +1,30 @@
+{
+	"PlayerData":
+	{
+		"userName": "NiceNews",
+		"characterClass": 1
+	},
+	"Status":
+	{
+		"level": 1,
+		"damage": 100,
+		"armor": 30
+	},
+	"Skill":
+	{
+		"SkillData": [
+			{
+				"skillName": "FireBall",
+				"skillLevel": 1
+			},
+			{
+				"skillName": "IceBall",
+				"skillLevel": 2
+			},
+			{
+				"skillName": "WaterBall",
+				"skillLevel": 3
+			}
+		]
+	}
+}
