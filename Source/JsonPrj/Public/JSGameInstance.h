@@ -100,26 +100,26 @@ protected:
 
 	void PostJson(FString _Json, FString _IP);
 
-	bool SaveJsonToFile(const FString& _Json, FString _FileName);
+	bool SaveJsonToFile(FString _Json, FString _FileName);
 	bool LoadJsonFromFile(FString& _OutJson, FString _FileName);
 
 	template<typename Struct_Type>
 	FString CreateDataToJson(Struct_Type& _Data)
 	{
-		//JsonWriter·Î ¾µ ÁØºñ
+		//JsonWriterë¡œ ì“¸ ì¤€ë¹„
 		FString jsonData{};
 		TSharedRef<TJsonWriter<TCHAR>> jsonWriter = TJsonWriterFactory<>::Create(&jsonData);
 
-		//¸®ÇÃ·º¼ÇÀ» È°¿ëÇØ Ä«Å×°í¸®·Î jsonÀ» ÀúÀåÇÏ±â ¶§¹®¿¡
-		//Ä«Å×°í¸® ÀÌ¸§À» Áßº¹µÇÁö ¾Ê°Ô ÁöÁ¤ÇÑ´Ù
-		//±¸Á¶Ã¼ÀÇ ÇÊµå¸¦ µ¹¸é¼­ Ä«Å×°í¸® ÀÌ¸§À¸·Î jsonÀÇ ¿ÀºêÁ§Æ® ÇÊµå¸¦ »ı¼ºÇÏ°í µ¥ÀÌÅÍ¸¦ ¾´´Ù
+		//ë¦¬í”Œë ‰ì…˜ì„ í™œìš©í•´ ì¹´í…Œê³ ë¦¬ë¡œ jsonì„ ì €ì¥í•˜ê¸° ë•Œë¬¸ì—
+		//ì¹´í…Œê³ ë¦¬ ì´ë¦„ì„ ì¤‘ë³µë˜ì§€ ì•Šê²Œ ì§€ì •í•œë‹¤
+		//êµ¬ì¡°ì²´ì˜ í•„ë“œë¥¼ ëŒë©´ì„œ ì¹´í…Œê³ ë¦¬ ì´ë¦„ìœ¼ë¡œ jsonì˜ ì˜¤ë¸Œì íŠ¸ í•„ë“œë¥¼ ìƒì„±í•˜ê³  ë°ì´í„°ë¥¼ ì“´ë‹¤
 		FString categoryName = TEXT("None");
 		jsonWriter->WriteObjectStart();
 		for (TFieldIterator<FField> fIter(Struct_Type::StaticStruct()); fIter; ++fIter)
 		{
 			FField* field = *fIter;
 
-			//Ä«Å×°í¸® ÀÌ¸§ÀÌ º¯°æµÇ¸é jsonÀÇ ¿ÀºêÁ§Æ® ÇÊµå¸¦ »õ·Î »ı¼ºÇÑ´Ù
+			//ì¹´í…Œê³ ë¦¬ ì´ë¦„ì´ ë³€ê²½ë˜ë©´ jsonì˜ ì˜¤ë¸Œì íŠ¸ í•„ë“œë¥¼ ìƒˆë¡œ ìƒì„±í•œë‹¤
 			FString currentCategoryName = field->GetMetaData(TEXT("category"));
 			if (categoryName != currentCategoryName)
 			{
@@ -142,14 +142,14 @@ protected:
 	template<typename Struct_Type>
 	Struct_Type LoadDataFromJson(FString _Json)
 	{
-		//±¸Á¶Ã¼¸¦ ÇÏ³ª ¸¸µé°í ±× ±¸Á¶Ã¼¿¡ jsonµ¥ÀÌÅÍ¸¦ ¾²±âÀ§ÇØ
-		//jsonÀ» ÀĞ¾îµéÀÏ ÁØºñ¸¦ ÇÑ´Ù
+		//êµ¬ì¡°ì²´ë¥¼ í•˜ë‚˜ ë§Œë“¤ê³  ê·¸ êµ¬ì¡°ì²´ì— jsonë°ì´í„°ë¥¼ ì“°ê¸°ìœ„í•´
+		//jsonì„ ì½ì–´ë“¤ì¼ ì¤€ë¹„ë¥¼ í•œë‹¤
 		Struct_Type loadData{};
-		TSharedRef<TJsonReader<TCHAR>> jsonReader = TJsonReaderFactory<TCHAR>::Create(_Json);
+		TSharedRef<TJsonReader<TCHAR>> jsonReader = TJsonReaderFactory<TCHAR>::Create(MoveTemp(_Json));
 		TSharedPtr<FJsonObject> json = MakeShareable(new FJsonObject());
 
-		//¸®ÇÃ·º¼ÇÀ» È°¿ëÇØ jsonÀÇ ¿ÀºêÁ§Æ® ÇÊµå¸¦ ÀĞ±â ¶§¹®¿¡
-		//Ã³À½¿¡ ¿ÀºêÁ§Æ® ÇÊµå¸¦ Áßº¹µÇÁö ¾Ê´Â °ªÀ¸·Î ÁöÁ¤ÇÑ´Ù
+		//ë¦¬í”Œë ‰ì…˜ì„ í™œìš©í•´ jsonì˜ ì˜¤ë¸Œì íŠ¸ í•„ë“œë¥¼ ì½ê¸° ë•Œë¬¸ì—
+		//ì²˜ìŒì— ì˜¤ë¸Œì íŠ¸ í•„ë“œë¥¼ ì¤‘ë³µë˜ì§€ ì•ŠëŠ” ê°’ìœ¼ë¡œ ì§€ì •í•œë‹¤
 		FString objectFeildName = TEXT("None");
 		check(FJsonSerializer::Deserialize(jsonReader, json) && json.IsValid());
 		const TSharedPtr<FJsonObject>* jsonObj{};
@@ -157,7 +157,7 @@ protected:
 		{
 			FField* field = *fIter;
 
-			//Ä«Å×°í¸® ÀÌ¸§ÀÌ º¯°æµÇ¸é º¯°æµÈ ¿ÀºêÁ§Æ® ÇÊµå¸¦ ÀĞ¾îµéÀÎ´Ù
+			//ì¹´í…Œê³ ë¦¬ ì´ë¦„ì´ ë³€ê²½ë˜ë©´ ë³€ê²½ëœ ì˜¤ë¸Œì íŠ¸ í•„ë“œë¥¼ ì½ì–´ë“¤ì¸ë‹¤
 			FString currentCategoryName = field->GetMetaData(TEXT("category"));
 			if (objectFeildName != currentCategoryName)
 			{
@@ -181,8 +181,8 @@ private:
 	template<typename Struct_Type>
 	bool WriteStructArrayJson(void* _Container, FArrayProperty* _ArrayProperty, TSharedRef<TJsonWriter<TCHAR>>& _JsonWriter)
 	{
-		//¹è¿­ ¶ÇÇÑ ¸®ÇÃ·º¼ÇÀ» ÅëÇØ µ¿ÀûÀ¸·Î ¾²±â À§ÇØ
-		//¹è¿­ ¾²±â¸¦ µû·Î Ã³¸®¸¦ ÇØÁØ´Ù
+		//ë°°ì—´ ë˜í•œ ë¦¬í”Œë ‰ì…˜ì„ í†µí•´ ë™ì ìœ¼ë¡œ ì“°ê¸° ìœ„í•´
+		//ë°°ì—´ ì“°ê¸°ë¥¼ ë”°ë¡œ ì²˜ë¦¬ë¥¼ í•´ì¤€ë‹¤
 		FScriptArray* sArr = _ArrayProperty->GetPropertyValuePtr_InContainer(_Container);
 		TArray<Struct_Type> structArray = (TArray<Struct_Type>&)(*sArr);
 		_JsonWriter->WriteArrayStart(*Struct_Type::StaticStruct()->GetName());
@@ -206,8 +206,8 @@ private:
 	template<typename Struct_Type>
 	bool ReadStructArrayJson(void* _Container, FArrayProperty* _ArrayProperty, const TArray<TSharedPtr<FJsonValue>>* _JsonArray)
 	{
-		//¹è¿­ ¶ÇÇÑ ¸®ÇÃ·º¼ÇÀ» ÅëÇØ µ¿ÀûÀ¸·Î ÀĞ¾îµéÀÌ±â À§ÇØ
-		//¹è¿­ ÀĞ±â¸¦ µû·Î Ã³¸®¸¦ ÇØÁØ´Ù
+		//ë°°ì—´ ë˜í•œ ë¦¬í”Œë ‰ì…˜ì„ í†µí•´ ë™ì ìœ¼ë¡œ ì½ì–´ë“¤ì´ê¸° ìœ„í•´
+		//ë°°ì—´ ì½ê¸°ë¥¼ ë”°ë¡œ ì²˜ë¦¬ë¥¼ í•´ì¤€ë‹¤
 		TArray<Struct_Type> structArray{};
 		Struct_Type structure{};
 
