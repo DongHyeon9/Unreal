@@ -39,10 +39,10 @@ void UJSGameInstance::PostJson(FString _Json, FString _IP)
 	httpRequest->ProcessRequest();
 }
 
-bool UJSGameInstance::SaveJsonToFile(const FString& _Json, FString _FileName)
+bool UJSGameInstance::SaveJsonToFile(FString _Json, FString _FileName)
 {
 	FString directory = UKismetSystemLibrary::GetProjectSavedDirectory() + _FileName;
-	return FFileHelper::SaveStringToFile(*_Json, *directory);
+	return FFileHelper::SaveStringToFile(*MoveTemp(_Json), *directory);
 }
 
 bool UJSGameInstance::LoadJsonFromFile(FString& _OutJson, FString _FileName)
@@ -75,7 +75,7 @@ void UJSGameInstance::OnPostRequestComplete(FHttpRequestPtr _Request, FHttpRespo
 	{
 		FString request = _Response->GetContentAsString();
 
-		//request ¸Ş½ÃÁö·Î ÀÛ¾÷
+		//request ë©”ì‹œì§€ë¡œ ì‘ì—…
 	}
 	else
 	{
@@ -85,8 +85,8 @@ void UJSGameInstance::OnPostRequestComplete(FHttpRequestPtr _Request, FHttpRespo
 
 bool UJSGameInstance::JsonWriteByField(void* _Container, FField* _Field, TSharedRef<TJsonWriter<TCHAR>>& _JsonWriter)
 {
-	//°¢ ÇÊµå¿¡ ¸Â´Â °ªÀ¸·Î PropertyField¸¦ Ä³½ºÆÃÇØÁà¼­
-	//°¢ ÇÊµå¿¡ ¸Â´Â Çü½ÄÀ¸·Î jsonÀ» ¾´´Ù
+	//ê° í•„ë“œì— ë§ëŠ” ê°’ìœ¼ë¡œ PropertyFieldë¥¼ ìºìŠ¤íŒ…í•´ì¤˜ì„œ
+	//ê° í•„ë“œì— ë§ëŠ” í˜•ì‹ìœ¼ë¡œ jsonì„ ì“´ë‹¤
 	if (auto floatProperty = CastField<FFloatProperty>(_Field))
 	{
 		float value{};
@@ -125,19 +125,19 @@ bool UJSGameInstance::JsonWriteByField(void* _Container, FField* _Field, TShared
 			}
 			else
 			{
-				//else if¿¡ Ãß°¡ÇÏ°í½ÍÀº StructÅ¸ÀÔ
+				//else ifì— ì¶”ê°€í•˜ê³ ì‹¶ì€ Structíƒ€ì…
 				checkf(false, TEXT("Unkwon Struct Type"));
 			}
 		}
 		else
 		{
-			//else if¿¡ TArray Å¸ÀÔ
+			//else ifì— TArray íƒ€ì…
 			checkf(false, TEXT("Unkwon Array Type"));
 		}
 	}
 	else
 	{
-		//else if¿¡ Ãß°¡ÇÏ°í½ÍÀº FPropertyÅ¸ÀÔ
+		//else ifì— ì¶”ê°€í•˜ê³ ì‹¶ì€ FPropertyíƒ€ì…
 		checkf(false, TEXT("Unkwon FProperty Type"));
 	}
 	return true;
@@ -145,10 +145,10 @@ bool UJSGameInstance::JsonWriteByField(void* _Container, FField* _Field, TShared
 
 bool UJSGameInstance::JsonReadByField(void* _Container, FField* _Field, FJsonObject* _JsonObj)
 {
-	//°¢ ÇÊµå¿¡ ¸Â´Â °ªÀ¸·Î PropertyField¸¦ Ä³½ºÆÃÇØÁà¼­
-	//°¢ ÇÊµå¿¡ ¸Â´Â Çü½ÄÀ¸·Î jsonÀ» ÀĞ´Â´Ù
+	//ê° í•„ë“œì— ë§ëŠ” ê°’ìœ¼ë¡œ PropertyFieldë¥¼ ìºìŠ¤íŒ…í•´ì¤˜ì„œ
+	//ê° í•„ë“œì— ë§ëŠ” í˜•ì‹ìœ¼ë¡œ jsonì„ ì½ëŠ”ë‹¤
 	if (auto floatProperty = CastField<FFloatProperty>(_Field))
-	{		
+	{
 		float value{};
 		check(_JsonObj->TryGetNumberField(*_Field->GetName(), value));
 		floatProperty->SetValue_InContainer(_Container, value);
@@ -187,19 +187,19 @@ bool UJSGameInstance::JsonReadByField(void* _Container, FField* _Field, FJsonObj
 			}
 			else
 			{
-				//else if¿¡ Ãß°¡ÇÏ°í½ÍÀº StructÅ¸ÀÔ
+				//else ifì— ì¶”ê°€í•˜ê³ ì‹¶ì€ Structíƒ€ì…
 				checkf(false, TEXT("Unkwon Struct Type"));
 			}
 		}
 		else
 		{
-			//else if¿¡ TArray Å¸ÀÔ
+			//else ifì— TArray íƒ€ì…
 			checkf(false, TEXT("Unkwon Array Type"));
 		}
 	}
 	else
 	{
-		//else if¿¡ Ãß°¡ÇÏ°í½ÍÀº FPropertyÅ¸ÀÔ
+		//else ifì— ì¶”ê°€í•˜ê³ ì‹¶ì€ FPropertyíƒ€ì…
 		checkf(false, TEXT("Unkwon FProperty Type"));
 	}
 
