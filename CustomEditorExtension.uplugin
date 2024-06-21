@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.0.1",
+	"FriendlyName": "CustomEditorExtension",
+	"Description": "",
+	"Category": "NiceNews",
+	"CreatedBy": "NicwNews",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "CustomEditorExtension",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
